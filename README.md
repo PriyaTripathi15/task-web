@@ -1,84 +1,51 @@
-📝 Task Management Portal
+# Task Management Portal
 
-Tech Stack: React (Vite) + NestJS + MongoDB + JWT
+**Tech Stack:** React (Vite) + NestJS + MongoDB + JWT  
+A full-stack Task Management Portal where users can register, log in, and securely manage their personal tasks. Each user can access **only their own tasks**.
 
-📌 Project Overview
+---
 
-This is a full-stack Task Management Portal built using:
+## Overview
 
-Frontend: React (Vite) + Tailwind CSS
+This project is built with:
 
-Backend: NestJS
+- **Frontend:** React (Vite) + Tailwind CSS
+- **Backend:** NestJS
+- **Database:** MongoDB
+- **Authentication:** JWT (with bcrypt password hashing)
 
-Database: MongoDB
+---
 
-Authentication: JWT
+## Features
 
-The application allows users to register, log in, and manage their personal tasks securely.
+### Authentication (JWT-based)
+- User Registration
+- User Login
+- Password hashing using **bcrypt**
+- JWT token generation
+- Protected routes using `AuthGuard('jwt')`
+- Only authenticated users can access the dashboard
 
-Each user can only access and manage their own tasks.
+### Task Management
+- **Add Task**
+  - Title (Required)
+  - Description (Optional)
+  - Status (Default: Pending)
+  - Created At (Auto-generated)
+  - User ID (Linked to logged-in user)
+- **View Tasks**
+  - Shows tasks for the logged-in user only
+  - Displays: Title, Description, Status, Created Date
+- **Toggle Task Status**
+  - Pending ↔ Completed
+- **Filter Tasks**
+  - All / Pending / Completed
 
-🚀 Features
-🔐 Authentication (JWT Based)
+---
 
-User Registration
+## Project Structure
 
-User Login
-
-Password hashing using bcrypt
-
-JWT token generation
-
-Protected routes using AuthGuard('jwt')
-
-Only authenticated users can access the dashboard
-
-📋 Task Management
-✅ Add Task
-
-Title (Required)
-
-Description (Optional)
-
-Status (Default: Pending)
-
-Created At (Auto-generated)
-
-User ID (Linked to logged-in user)
-
-✅ View Tasks
-
-Display all tasks of logged-in user
-
-Show:
-
-Title
-
-Description
-
-Status
-
-Created Date
-
-Clean UI using Tailwind CSS
-
-✅ Mark Task as Completed
-
-Toggle between:
-
-Pending
-
-Completed
-
-✅ Filter Tasks
-
-All
-
-Pending
-
-Completed
-
-🏗️ Project Structure
+```text
 task-management-portal/
 │
 ├── backend/
@@ -102,191 +69,203 @@ task-management-portal/
 │   ├── package.json
 │
 └── README.md
-⚙️ How To Run The Project
-🔧 Backend Setup (NestJS)
-1️⃣ Navigate to backend
+```
+
+---
+
+## How to Run
+
+### Backend Setup (NestJS)
+
+1. Go to backend folder:
+```bash
 cd backend
-2️⃣ Install dependencies
+```
+
+2. Install dependencies:
+```bash
 npm install
-3️⃣ Create .env file
+```
+
+3. Create a `.env` file:
+```env
 MONGO_URI=mongodb://localhost:27017/taskportal
 JWT_SECRET=your_secret_key
-4️⃣ Start backend
+```
+
+4. Start backend:
+```bash
 npm run start:dev
+```
 
-Backend runs on:
+Backend will run on:
+- `http://localhost:3000`
 
-http://localhost:3000
-💻 Frontend Setup (React + Vite)
-1️⃣ Navigate to frontend
+---
+
+### Frontend Setup (React + Vite)
+
+1. Go to frontend folder:
+```bash
 cd frontend
-2️⃣ Install dependencies
+```
+
+2. Install dependencies:
+```bash
 npm install
-3️⃣ Start frontend
+```
+
+3. Start frontend:
+```bash
 npm run dev
+```
 
-Frontend runs on:
+Frontend will run on:
+- `http://localhost:5173`
 
-http://localhost:5173
-🔐 Authentication Flow
+---
 
-User registers using /auth/register
+## Authentication Flow
 
-Password is hashed using bcrypt
-
-User logs in using /auth/login
-
-Backend returns:
-
+1. User registers via `POST /auth/register`
+2. Password is hashed using bcrypt
+3. User logs in via `POST /auth/login`
+4. Backend returns:
+```json
 {
   "access_token": "JWT_TOKEN"
 }
+```
 
-Token stored in localStorage
-
-Token sent in header:
-
+5. Token is stored in `localStorage`
+6. For protected requests, token is sent as:
+```http
 Authorization: Bearer <JWT_TOKEN>
+```
 
-Backend validates token using JWT Strategy
+7. Backend validates token using JWT Strategy
 
-📡 API Design (NON AI GENERATED)
-🔑 Auth APIs
-Register
-POST /auth/register
+---
 
-Request Body:
+## API Design (Non-AI Generated)
 
+### Auth APIs
+
+#### Register
+- **POST** `/auth/register`
+
+Request body:
+```json
 {
   "email": "user@gmail.com",
   "password": "123456"
 }
-Login
-POST /auth/login
+```
+
+#### Login
+- **POST** `/auth/login`
 
 Response:
-
+```json
 {
   "access_token": "jwt_token_here"
 }
-📋 Task APIs (Protected)
-Create Task
-POST /tasks
+```
+
+---
+
+### Task APIs (Protected)
+
+#### Create Task
+- **POST** `/tasks`
 
 Headers:
-
-Authorization: Bearer token
+```http
+Authorization: Bearer <token>
+```
 
 Body:
-
+```json
 {
   "title": "Complete assignment",
   "description": "Submit before deadline"
 }
-Get All Tasks
-GET /tasks
+```
 
-Returns only logged-in user tasks.
+#### Get All Tasks
+- **GET** `/tasks`  
+Returns only the logged-in user's tasks.
 
-Toggle Task Status
-PATCH /tasks/:id
+#### Toggle Task Status
+- **PATCH** `/tasks/:id`  
+Changes status:
+- Pending → Completed
+- Completed → Pending
 
-Changes:
+---
 
-Pending → Completed
-
-Completed → Pending
-
-🧠 State Management (NON AI GENERATED)
+## State Management (Non-AI Generated)
 
 State management is handled using React built-in hooks:
 
-useState used for:
+- `useState` for:
+  - Task list
+  - Input fields (title, description)
+  - Filter state (All / Pending / Completed)
+  - Authentication token handling
+- `useEffect` for:
+  - Fetching tasks after login
+  - Updating UI after task creation or toggle
 
-Task list
+No external state management library (Redux / Context) is used.  
+JWT token is stored in `localStorage` for session persistence.
 
-Input fields (title, description)
+---
 
-Filter state (All / Pending / Completed)
-
-Authentication token handling
-
-useEffect used for:
-
-Fetching tasks after login
-
-Updating UI after task creation or toggle
-
-No external state management library (Redux, Context API) is used.
-
-JWT token is stored in localStorage for session persistence.
-
-🤖 AI Usage Disclosure
+## AI Usage Disclosure
 
 AI tools were used for:
+- Initial project structure guidance
+- JWT setup reference
+- Fixing 401 Unauthorized error
+- Improving security of toggle route
+- Generating README template structure
 
-Initial project structure guidance
+### What AI Generated
+- Basic NestJS module scaffolding guidance
+- JWT strategy structure
+- Initial React component layout
+- Error handling improvements
 
-JWT setup reference
+### What I Modified / Implemented Manually
+- Secured task toggle route using userId validation
+- Implemented task filtering logic
+- Designed state management logic
+- Implemented protected routing in React
+- Improved validation and error handling
+- API design section (written manually)
+- State management explanation (written manually)
 
-Fixing 401 Unauthorized error
+---
 
-Improving security of toggle route
+## Security Measures
+- Password hashed using bcrypt
+- JWT authentication implemented
+- Tasks filtered by userId
+- Protected routes using `AuthGuard('jwt')`
+- Token required for all task routes
 
-Generating README template structure
+---
 
-What AI Generated
+## Future Improvements
+- Edit task
+- Delete task
+- Due dates
+- Pagination
+- Deployment on cloud
+- Role-based authentication
 
-Basic NestJS module scaffolding guidance
+---
 
-JWT strategy structure
-
-Initial React component layout
-
-Error handling improvements
-
-What I Modified / Implemented Manually
-
-Secured task toggle route using userId validation
-
-Implemented task filtering logic
-
-Designed state management logic
-
-Implemented protected routing in React
-
-Improved validation and error handling
-
-API design section (written manually)
-
-State management explanation (written manually)
-
-🔒 Security Measures
-
-Password hashed using bcrypt
-
-JWT authentication implemented
-
-Tasks filtered by userId
-
-Protected routes using AuthGuard('jwt')
-
-Token required for all task routes
-
-📌 Future Improvements
-
-Edit task
-
-Delete task
-
-Due dates
-
-Pagination
-
-Deployment on cloud
-
-Role-based authentication
-
-👩‍💻 Author
-
-Priya Tripath
+## Author
+**Priya Tripathi**
