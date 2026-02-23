@@ -5,6 +5,8 @@ import { useNavigate, Link } from "react-router-dom";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -15,14 +17,13 @@ function Login() {
     }
 
     try {
+      setLoading(true);
+
       const res = await axios.post("http://localhost:3000/auth/login", {
         email,
         password,
       });
 
-      console.log("Login Response:", res.data);
-
-      // 👇 IMPORTANT FIX
       localStorage.setItem(
         "token",
         res.data.access_token || res.data.token
@@ -31,19 +32,29 @@ function Login() {
       navigate("/");
     } catch (error) {
       alert("Invalid Credentials");
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 shadow-lg rounded w-80">
-        <h2 className="text-xl font-bold mb-4 text-center">Login</h2>
+   return (
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center"
+      style={{
+        backgroundImage:
+          "url('https://images.unsplash.com/photo-1508780709619-79562169bc64')",
+      }}
+    >
+      <div className="backdrop-blur-lg bg-white/20 border border-white/30 shadow-2xl rounded-2xl p-8 w-96 text-white">
+        <h2 className="text-3xl font-semibold mb-6 text-center tracking-wide">
+          Welcome Back
+        </h2>
 
         <form onSubmit={handleLogin}>
           <input
             type="email"
             placeholder="Email"
-            className="border p-2 w-full mb-3 rounded"
+            className="w-full mb-4 p-3 rounded-lg bg-white/30 placeholder-white text-white outline-none focus:ring-2 focus:ring-green-400"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -51,19 +62,22 @@ function Login() {
           <input
             type="password"
             placeholder="Password"
-            className="border p-2 w-full mb-3 rounded"
+            className="w-full mb-4 p-3 rounded-lg bg-white/30 placeholder-white text-white outline-none focus:ring-2 focus:ring-green-400"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <button className="bg-green-500 text-white w-full p-2 rounded hover:bg-green-600 transition">
-            Login
+          <button
+            disabled={loading}
+            className="w-full p-3 rounded-lg bg-green-600 hover:bg-green-700 transition-all duration-300 font-semibold shadow-lg"
+          >
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="text-sm mt-3 text-center">
-          Don't have account?{" "}
-          <Link to="/register" className="text-green-500 hover:underline">
+        <p className="text-sm mt-5 text-center">
+          Don’t have an account?{" "}
+          <Link to="/register" className="text-green-300 hover:underline">
             Register
           </Link>
         </p>

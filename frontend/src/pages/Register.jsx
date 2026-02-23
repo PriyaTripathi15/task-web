@@ -31,7 +31,6 @@ function Register() {
       alert("Registered Successfully 🎉");
       navigate("/login");
     } catch (error) {
-      console.log(error.response?.data);
       alert(error.response?.data?.message || "User already exists");
     } finally {
       setLoading(false);
@@ -39,9 +38,15 @@ function Register() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 shadow-lg rounded w-80">
-        <h2 className="text-xl font-bold mb-4 text-center">
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center"
+      style={{
+        backgroundImage:
+          "url('https://images.unsplash.com/photo-1508780709619-79562169bc64')",
+      }}
+    >
+      <div className="backdrop-blur-lg bg-white/20 border border-white/30 shadow-2xl rounded-2xl p-8 w-96 text-white">
+        <h2 className="text-3xl font-semibold mb-6 text-center tracking-wide">
           Create Account
         </h2>
 
@@ -49,7 +54,7 @@ function Register() {
           <input
             type="email"
             placeholder="Email"
-            className="border p-2 w-full mb-3 rounded"
+            className="w-full mb-4 p-3 rounded-lg bg-white/30 placeholder-white text-white outline-none focus:ring-2 focus:ring-blue-400"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -57,22 +62,22 @@ function Register() {
           <input
             type="password"
             placeholder="Password"
-            className="border p-2 w-full mb-3 rounded"
+            className="w-full mb-4 p-3 rounded-lg bg-white/30 placeholder-white text-white outline-none focus:ring-2 focus:ring-blue-400"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
 
           <button
             disabled={loading}
-            className="bg-blue-500 text-white w-full p-2 rounded hover:bg-blue-600 transition"
+            className="w-full p-3 rounded-lg bg-blue-600 hover:bg-blue-700 transition-all duration-300 font-semibold shadow-lg"
           >
             {loading ? "Registering..." : "Register"}
           </button>
         </form>
 
-        <p className="text-sm mt-3 text-center">
+        <p className="text-sm mt-5 text-center">
           Already have account?{" "}
-          <Link to="/login" className="text-blue-500 hover:underline">
+          <Link to="/login" className="text-blue-300 hover:underline">
             Login
           </Link>
         </p>

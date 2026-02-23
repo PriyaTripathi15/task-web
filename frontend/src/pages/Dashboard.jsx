@@ -8,7 +8,7 @@ function Dashboard() {
 
   const token = localStorage.getItem("token");
 
-  // 🔒 Redirect if not logged in
+  // Redirect if not logged in
   useEffect(() => {
     if (!token) {
       window.location.href = "/login";
@@ -22,8 +22,6 @@ function Dashboard() {
       });
       setTasks(res.data);
     } catch (err) {
-      console.log("Fetch Error:", err.response?.data || err.message);
-
       if (err.response?.status === 401) {
         alert("Session expired. Please login again.");
         localStorage.removeItem("token");
@@ -39,30 +37,28 @@ function Dashboard() {
   const addTask = async () => {
     if (!title.trim()) return alert("Title required");
 
-    try {
-      await axios.post(
-        "http://localhost:3000/tasks",
-        { title },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setTitle("");
-      fetchTasks();
-    } catch (err) {
-      console.log(err);
-    }
+    await axios.post(
+      "http://localhost:3000/tasks",
+      { title },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    setTitle("");
+    fetchTasks();
   };
 
   const toggle = async (id) => {
-    try {
-      await axios.patch(
-        `http://localhost:3000/tasks/${id}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      fetchTasks();
-    } catch (err) {
-      console.log(err);
-    }
+    await axios.patch(
+      `http://localhost:3000/tasks/${id}`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    fetchTasks();
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
   };
 
   const filtered =
@@ -70,80 +66,106 @@ function Dashboard() {
       ? tasks
       : tasks.filter((t) => t.status === filter);
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login";
-  };
-
   return (
-    <div className="p-10 bg-gray-100 min-h-screen">
-      
-      <div className="flex justify-between mb-6">
-        <h1 className="text-2xl font-bold">Task Dashboard</h1>
-        <button
-          onClick={logout}
-          className="bg-red-500 text-white px-4 py-2 rounded"
-        >
-          Logout
-        </button>
-      </div>
+    <div
+      className="min-h-screen bg-cover bg-center relative p-8"
+      style={{
+        backgroundImage:
+          "url('https://images.unsplash.com/photo-1492724441997-5dc865305da7')",
+      }}
+    >
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/50"></div>
 
-      <div className="mb-4">
-        <input
-          className="border p-2 mr-2"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Task title"
-        />
-        <button
-          onClick={addTask}
-          className="bg-green-500 text-white px-4 py-2 rounded"
-        >
-          Add
-        </button>
-      </div>
+      <div className="relative z-10  shadow-2xl rounded-2xl p-8 max-w-3xl mx-auto bg-white/20 border border-white/30">
 
-      <div className="mb-4 space-x-3">
-        {["All", "Pending", "Completed"].map((f) => (
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-800">
+            Task Dashboard
+          </h1>
           <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className="bg-gray-300 px-3 py-1 rounded"
+            onClick={logout}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
           >
-            {f}
-          </button>
-        ))}
-      </div>
-
-      {filtered.map((task) => (
-        <div
-          key={task._id}
-          className="bg-white p-4 mb-3 shadow rounded flex justify-between"
-        >
-          <div>
-            <h2 className="font-bold">{task.title}</h2>
-            <p className="text-sm text-gray-500">
-              {new Date(task.createdAt).toLocaleString()}
-            </p>
-            <span
-              className={
-                task.status === "Completed"
-                  ? "text-green-600"
-                  : "text-yellow-600"
-              }
-            >
-              {task.status}
-            </span>
-          </div>
-
-          <button
-            onClick={() => toggle(task._id)}
-            className="bg-purple-500 text-white px-3 py-1 rounded"
-          >
-            Toggle
+            Logout
           </button>
         </div>
-      ))}
+
+        {/* Add Task */}
+        <div className="flex mb-6">
+          <input
+            className="flex-1 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter task title..."
+          />
+          <button
+            onClick={addTask}
+            className="ml-3 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition"
+          >
+            Add
+          </button>
+        </div>
+
+        {/* Filters */}
+        <div className="flex space-x-3 mb-6 justify-center">
+          {["All", "Pending", "Completed"].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-4 py-2 rounded-lg transition ${
+                filter === f
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 hover:bg-gray-300 text-gray-700"
+              }`}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+
+        {/* Task List */}
+        <div className="space-y-4">
+          {filtered.length === 0 && (
+            <p className="text-center text-gray-500">
+              No tasks available
+            </p>
+          )}
+
+          {filtered.map((task) => (
+            <div
+              key={task._id}
+              className="bg-gray-100 p-4 rounded-xl flex justify-between items-center shadow-sm"
+            >
+              <div>
+                <h2 className="font-bold text-lg text-gray-800">
+                  {task.title}
+                </h2>
+                <p className="text-sm text-gray-500">
+                  {new Date(task.createdAt).toLocaleString()}
+                </p>
+                <span
+                  className={`font-semibold ${
+                    task.status === "Completed"
+                      ? "text-green-600"
+                      : "text-yellow-600"
+                  }`}
+                >
+                  {task.status}
+                </span>
+              </div>
+
+              <button
+                onClick={() => toggle(task._id)}
+                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition"
+              >
+                Toggle
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
